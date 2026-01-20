@@ -9,7 +9,7 @@ from src.support_agent.snowflake_client import connect_snowflake
 # Config
 # -------------------------
 BASE_DIR = Path(__file__).resolve().parent.parent  # base = project root
-CSV_PATH = BASE_DIR / "data" / "tickets.csv"
+CSV_PATH = BASE_DIR / "data" / "tickets_clean.csv"
 SQL_SETUP_PATH = BASE_DIR / "sql" / "00_setup.sql"
 TABLE_NAME = "SUPPORT_TICKETS"
 SCHEMA = "RAW"
