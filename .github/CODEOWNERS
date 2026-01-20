@@ -11,6 +11,10 @@
 # to code ownership rules
 .github/CODEOWNERS @mathusanm6
 
+# Protect GitHub workflows
+# Ensures that CI/CD pipelines are maintained by the responsible owner
+.github/workflows/ @mathusanm6
+
 # Ruff configuration files
 # Protects linting and formatting configuration to maintain
 # consistent code quality standards across the project
