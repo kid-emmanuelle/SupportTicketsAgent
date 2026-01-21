@@ -1,2 +1,15 @@
 # Development dependencies
-ruff==0.14.13
+-r requirements.txt
+
+# Testing
+pytest>=8.0.0
+
+# Formatting / linting
+ruff>=0.5.0
+
+# Optional but common
+# black>=24.0.0
+# pre-commit>=3.7.0
+
+# Notebook support (only enable if you actually use notebooks)
+# ipykernel>=6.29.0
