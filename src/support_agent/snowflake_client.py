@@ -1,3 +1,5 @@
+"""Snowflake client utilities for creating sessions and accessing core APIs."""
+
 from __future__ import annotations
 
 from snowflake.core import Root
@@ -25,4 +27,5 @@ def create_snowpark_session(settings: Settings) -> Session:
 
 
 def get_root(session: Session) -> Root:
+    """Get a Snowflake Root object from an existing session for accessing core APIs."""
     return Root(session)

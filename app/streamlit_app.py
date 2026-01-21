@@ -1,1 +1,1 @@
-# Streamlit demo app
+"""Streamlit demo app."""

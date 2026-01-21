@@ -1,1 +1,1 @@
-# Node functions: ingest, classify, priority, retrieve, draft, guardrails, writeback
+"""Node functions: ingest, classify, priority, retrieve, draft, guardrails, writeback."""

@@ -1,1 +1,1 @@
-# Batch evaluation runner
+"""Batch evaluation runner."""

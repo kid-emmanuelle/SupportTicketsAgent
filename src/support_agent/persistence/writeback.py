@@ -1,1 +1,1 @@
-# Write agent outputs to Snowflake tables
+"""Write agent outputs to Snowflake tables."""

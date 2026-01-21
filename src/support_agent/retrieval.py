@@ -1,1 +1,1 @@
-# Cortex Search wrapper for semantic retrieval
+"""Cortex Search wrapper for semantic retrieval."""
