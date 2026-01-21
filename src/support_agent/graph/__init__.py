@@ -1,3 +1,2 @@
-"""
-LangGraph agent workflow
+"""LangGraph agent workflow
 """

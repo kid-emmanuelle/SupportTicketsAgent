@@ -1,3 +1,2 @@
-"""
-Persistence layer - writes agent outputs to Snowflake
+"""Persistence layer - writes agent outputs to Snowflake
 """

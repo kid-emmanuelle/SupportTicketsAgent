@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+
 """Optional helper script.
 
 Normally, data loading is done via Snowsight SQL worksheet or a notebook.

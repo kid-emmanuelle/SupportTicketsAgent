@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from snowflake.snowpark import Session
 from snowflake.core import Root
+from snowflake.snowpark import Session
 
 from .config import Settings
 

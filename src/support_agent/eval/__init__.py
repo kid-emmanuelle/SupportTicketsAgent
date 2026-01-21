@@ -1,3 +1,2 @@
-"""
-Evaluation module - metrics and scoring
+"""Evaluation module - metrics and scoring
 """
