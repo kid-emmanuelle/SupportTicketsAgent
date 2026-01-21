@@ -1,1 +1,1 @@
-# CLI: Run agent on multiple tickets
+"""CLI: Run agent on multiple tickets."""

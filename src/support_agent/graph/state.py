@@ -1,1 +1,1 @@
-# State definition (TypedDict or Pydantic)
+"""State definition (TypedDict or Pydantic)."""
