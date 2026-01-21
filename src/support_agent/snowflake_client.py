@@ -1,46 +1,26 @@
-import os
-from dotenv import load_dotenv
-import snowflake.connector
-from cryptography.hazmat.primitives import serialization
+from __future__ import annotations
+
+from snowflake.snowpark import Session
+from snowflake.core import Root
+
+from .config import Settings
 
 
-def load_private_key(private_key_path: str) -> bytes:
-    """
-    Load a PEM private key and return it in DER format
-    (required by Snowflake connector).
-    """
-    with open(private_key_path, "rb") as key_file:
-        private_key = serialization.load_pem_private_key(
-            key_file.read(),
-            password=None,
-        )
-
-    return private_key.private_bytes(
-        encoding=serialization.Encoding.DER,
-        format=serialization.PrivateFormat.PKCS8,
-        encryption_algorithm=serialization.NoEncryption(),
-    )
+def create_snowpark_session(settings: Settings) -> Session:
+    """Create a Snowpark Session using password auth (adapt for key-pair if needed)."""
+    connection_parameters = {
+        "account": settings.account,
+        "user": settings.user,
+        "password": settings.password,
+        "role": settings.role or None,
+        "warehouse": settings.warehouse or None,
+        "database": settings.database or None,
+        "schema": settings.schema or None,
+    }
+    # Remove None values to avoid Snowpark complaints in some environments
+    connection_parameters = {k: v for k, v in connection_parameters.items() if v is not None}
+    return Session.builder.configs(connection_parameters).create()
 
 
-def connect_snowflake():
-    """
-    Create and return a Snowflake connection using key pair authentication.
-    """
-    load_dotenv()
-
-    private_key = load_private_key(
-        os.getenv("SNOWFLAKE_PRIVATE_KEY_PATH")
-    )
-
-    conn = snowflake.connector.connect(
-        user=os.getenv("SNOWFLAKE_USER"),
-        account=os.getenv("SNOWFLAKE_ACCOUNT"),
-        role=os.getenv("SNOWFLAKE_ROLE"),
-        warehouse=os.getenv("SNOWFLAKE_WAREHOUSE"),
-        database=os.getenv("SNOWFLAKE_DATABASE"),
-        schema=os.getenv("SNOWFLAKE_SCHEMA"),
-        private_key=private_key,
-        ocsp_fail_open=True,
-    )
-
-    return conn
+def get_root(session: Session) -> Root:
+    return Root(session)

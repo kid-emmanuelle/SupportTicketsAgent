@@ -1,0 +1,26 @@
+# CODEOWNERS
+# This file defines the individuals responsible for code review and approval
+# for specific files and directories in this repository.
+# 
+# When a pull request modifies files listed here, the specified owners
+# will automatically be requested for review.
+
+# No default reviewer - only specific paths protected
+
+# Protect CODEOWNERS file itself to prevent unauthorized changes
+# to code ownership rules
+.github/CODEOWNERS @mathusanm6
+
+# Protect GitHub workflows
+# Ensures that CI/CD pipelines are maintained by the responsible owner
+.github/workflows/ @mathusanm6
+
+# Ruff configuration files
+# Protects linting and formatting configuration to maintain
+# consistent code quality standards across the project
+pyproject.toml @mathusanm6
+
+# Requirements files
+# Ensures dependencies are managed and updated by the responsible owner
+requirements.txt @mathusanm6
+requirements-dev.txt @mathusanm6
