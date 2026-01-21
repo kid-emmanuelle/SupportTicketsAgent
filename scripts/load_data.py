@@ -1,9 +1,6 @@
-# Load CSV data into Snowflake stage and trigger ingestion
+"""Load CSV data into Snowflake stage and trigger ingestion.
 
-from __future__ import annotations
-
-"""Optional helper script.
-
+Optional helper script.
 Normally, data loading is done via Snowsight SQL worksheet or a notebook.
 But if we want to automate it from Python:
 - upload CSV to a stage
@@ -11,8 +8,13 @@ But if we want to automate it from Python:
 This script intentionally leaves those details to the environment constraints.
 """
 
+from __future__ import annotations
+
+
 def main():
-    raise SystemExit("Implement load_data.py for the environment (stage + COPY INTO).")
+    """Execute data loading placeholder."""
+    msg = "Implement load_data. py for the environment (stage + COPY INTO)."
+    raise SystemExit(msg)
 
 
 if __name__ == "__main__":

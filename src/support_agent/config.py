@@ -1,12 +1,17 @@
+"""Configuration settings for the Support Agent."""
+
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
+import os
+
 from dotenv import load_dotenv
 
 
 @dataclass(frozen=True)
 class Settings:
+    """Application settings loaded from environment variables."""
+
     # Snowflake
     account: str
     user: str
@@ -35,7 +40,8 @@ def get_settings() -> Settings:
     def req(name: str) -> str:
         v = os.getenv(name)
         if not v:
-            raise RuntimeError(f"Missing required env var: {name}")
+            msg = f"Missing required env var:  {name}"
+            raise RuntimeError(msg)
         return v
 
     return Settings(
@@ -49,8 +55,14 @@ def get_settings() -> Settings:
         openai_api_base=req("OPENAI_API_BASE"),
         openai_api_key=req("OPENAI_API_KEY"),
         llm_model=os.getenv("LLM_MODEL", "openai-gpt-5"),
-        search_db=os.getenv("CORTEX_SEARCH_DB", os.getenv("SNOWFLAKE_DATABASE", "PROJECT_DB")),
-        search_schema=os.getenv("CORTEX_SEARCH_SCHEMA", os.getenv("SNOWFLAKE_SCHEMA", "")),
-        search_service=os.getenv("CORTEX_SEARCH_SERVICE", "support_tickets_search_service"),
+        search_db=os.getenv(
+            "CORTEX_SEARCH_DB", os.getenv("SNOWFLAKE_DATABASE", "PROJECT_DB")
+        ),
+        search_schema=os.getenv(
+            "CORTEX_SEARCH_SCHEMA", os.getenv("SNOWFLAKE_SCHEMA", "")
+        ),
+        search_service=os.getenv(
+            "CORTEX_SEARCH_SERVICE", "support_tickets_search_service"
+        ),
         top_k=int(os.getenv("RETRIEVE_TOP_K", "8")),
     )
