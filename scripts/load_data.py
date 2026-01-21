@@ -11,8 +11,11 @@ But if we want to automate it from Python:
 This script intentionally leaves those details to the environment constraints.
 """
 
+
 def main():
-    raise SystemExit("Implement load_data.py for the environment (stage + COPY INTO).")
+    raise SystemExit(
+        "Implement load_data.py for the environment (stage + COPY INTO)."
+    )
 
 
 if __name__ == "__main__":

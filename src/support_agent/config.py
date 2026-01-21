@@ -49,8 +49,14 @@ def get_settings() -> Settings:
         openai_api_base=req("OPENAI_API_BASE"),
         openai_api_key=req("OPENAI_API_KEY"),
         llm_model=os.getenv("LLM_MODEL", "openai-gpt-5"),
-        search_db=os.getenv("CORTEX_SEARCH_DB", os.getenv("SNOWFLAKE_DATABASE", "PROJECT_DB")),
-        search_schema=os.getenv("CORTEX_SEARCH_SCHEMA", os.getenv("SNOWFLAKE_SCHEMA", "")),
-        search_service=os.getenv("CORTEX_SEARCH_SERVICE", "support_tickets_search_service"),
+        search_db=os.getenv(
+            "CORTEX_SEARCH_DB", os.getenv("SNOWFLAKE_DATABASE", "PROJECT_DB")
+        ),
+        search_schema=os.getenv(
+            "CORTEX_SEARCH_SCHEMA", os.getenv("SNOWFLAKE_SCHEMA", "")
+        ),
+        search_service=os.getenv(
+            "CORTEX_SEARCH_SERVICE", "support_tickets_search_service"
+        ),
         top_k=int(os.getenv("RETRIEVE_TOP_K", "8")),
     )

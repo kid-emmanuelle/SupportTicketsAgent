@@ -18,7 +18,9 @@ def create_snowpark_session(settings: Settings) -> Session:
         "schema": settings.schema or None,
     }
     # Remove None values to avoid Snowpark complaints in some environments
-    connection_parameters = {k: v for k, v in connection_parameters.items() if v is not None}
+    connection_parameters = {
+        k: v for k, v in connection_parameters.items() if v is not None
+    }
     return Session.builder.configs(connection_parameters).create()
 
 
