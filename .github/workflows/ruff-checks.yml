@@ -1,4 +1,4 @@
-name: Ruff Checks
+name: Ruff Checks (fails)
 
 on:
     push:
