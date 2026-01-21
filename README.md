@@ -31,8 +31,10 @@ See [docs/Architecture.md](docs/Architecture.md) for detailed architecture and w
    cp .env.example .env
    ```
 
-2. Install dependencies:
+2. Set environment and install dependencies:
    ```bash
+   py -3.11 -m venv .venv
+   source .venv/bin/activate   # Windows: .venv\Scripts\activate
    pip install -r requirements.txt
    ```
 
@@ -50,6 +52,17 @@ See [docs/Architecture.md](docs/Architecture.md) for detailed architecture and w
    python scripts/load_data.py
    ```
 
+## Development
+
+Install dev dependencies:
+```bash
+pip install -r requirements-dev.txt```
+
+Run tests:
+```bash
+pytest tests/
+```
+
 ## Usage
 
 Run agent on a single ticket:
@@ -65,18 +78,6 @@ python scripts/run_batch.py --input tickets.csv
 Launch demo app:
 ```bash
 streamlit run app/streamlit_app.py
-```
-
-## Development
-
-Install dev dependencies:
-```bash
-pip install -r requirements-dev.txt
-```
-
-Run tests:
-```bash
-pytest tests/
 ```
 
 ## Git Workflow
