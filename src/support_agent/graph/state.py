@@ -1,26 +1,29 @@
-"""State definitions for the support agent graph module."""
-
-from __future__ import annotations
-
-from typing import Any, TypedDict
-
-
-class TicketState(TypedDict, total=False):
-    """TypedDict representing the state of a support ticket as it moves through the agent graph."""
-
+from typing import TypedDict, Any
+from snowflake.core import Root
+from snowflake.snowpark import Session
+# =========================
+# State Definition
+# =========================
+class TicketAnalysisState(TypedDict):
+    """State schema for the support ticket analysis pipeline."""
     # Input
-    ticket_id: str
     issue_description: str
+    
+    # Processing artifacts
+    normalized_text: str
     language: str
-
-    # Derived
-    topic: str
     intent: str
+    topic: str
     priority_level: str
-
-    # Retrieval + response
-    retrieved_context: list[str]
+    retrieved_docs: list
+    draft_response: str
     final_response: str
-
-    # Debug / metadata
-    retrieved_raw: list[dict[str, Any]]
+    
+    # Dependencies (injected)
+    session: Session
+    root: Root
+    reasoning_engine: Any
+    
+    # Metadata
+    timestamp: str
+    ticket_id: str
