@@ -1,1 +1,11 @@
-Priority classification prompt template
+Evaluate this customer issue and assign a priority level using these criteria:
+
+URGENT: Service outages, security vulnerabilities, payment failures, data loss
+HIGH: Feature malfunctions affecting multiple users, integration failures
+MEDIUM: Individual user problems, minor bugs, general inquiries
+LOW: Feature requests, documentation questions, cosmetic issues
+
+Customer Issue:
+{issue_description}
+
+Priority Assessment (URGENT/HIGH/MEDIUM/LOW):
