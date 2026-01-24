@@ -8,8 +8,6 @@ But if we want to automate it from Python:
 This script intentionally leaves those details to the environment constraints.
 """
 
-from __future__ import annotations
-
 from pathlib import Path
 
 from snowflake.snowpark import Session
