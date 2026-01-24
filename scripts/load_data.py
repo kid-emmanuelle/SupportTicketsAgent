@@ -20,7 +20,6 @@ def execute_sql_file(session, sql_file: Path):
     statements = [stmt.strip() for stmt in sql_content.split(";") if stmt.strip()]
     
     for stmt in statements:
-        print(f"Executing: {stmt[:100]}...")
         session.sql(stmt).collect()
     
     print(f"✅ Executed SQL file: {sql_file.name}")
