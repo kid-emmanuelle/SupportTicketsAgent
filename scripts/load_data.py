@@ -8,7 +8,6 @@ But if we want to automate it from Python:
 This script intentionally leaves those details to the environment constraints.
 """
 
-
 from pathlib import Path
 
 from snowflake.snowpark import Session
@@ -27,7 +26,9 @@ def execute_sql_file(session: Session, sql_file: Path) -> None:
         raise FileNotFoundError(msg)
 
     sql_content = sql_file.read_text()
-    statements = [stmt.strip() for stmt in sql_content.split(";") if stmt.strip()]
+    statements = [
+        stmt.strip() for stmt in sql_content.split(";") if stmt.strip()
+    ]
 
     for stmt in statements:
         session.sql(stmt).collect()
