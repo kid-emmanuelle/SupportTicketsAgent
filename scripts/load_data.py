@@ -15,6 +15,7 @@ from snowflake.snowpark import Session
 from src.support_agent.config import get_settings
 from src.support_agent.snowflake_client import create_snowpark_session
 
+
 FILE_NOT_FOUND_MSG = "not found"
 CSV_NOT_FOUND_MSG = "CSV file not found"
 
