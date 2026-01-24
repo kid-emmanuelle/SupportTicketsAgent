@@ -56,11 +56,11 @@ def main():
     
     # Step 1: Run setup SQL (creates database, schema, warehouse)
     print("\n🔧 Step 1: Running setup SQL...")
-    #execute_sql_file(session, SQL_SETUP_PATH)
+    execute_sql_file(session, SQL_SETUP_PATH)
     
     # Step 2: Upload CSV to stage
     print("\n📤 Step 2: Uploading CSV file...")
-    #upload_csv_to_stage(session, CSV_PATH, "support_data_stage")
+    upload_csv_to_stage(session, CSV_PATH, "support_data_stage")
     
     # Step 3: Run COPY INTO
     print("\n📥 Step 3: Loading data into table...")
