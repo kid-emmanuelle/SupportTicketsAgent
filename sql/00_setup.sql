@@ -1,6 +1,6 @@
 -- ============================================
 -- 00_setup.sql
--- Foundation: Database, Schemas, Warehouse
+-- Foundation: Database, Schemas, Warehouse, Stage
 -- ============================================
 
 -- Create database
@@ -26,8 +26,21 @@ USE WAREHOUSE COMPUTE_WH;
 USE SCHEMA RAW;
 
 -- Grant permissions (adjust role as needed)
--- GRANT USAGE ON DATABASE PROJECT_DB TO ROLE YOUR_ROLE;
--- GRANT USAGE ON ALL SCHEMAS IN DATABASE PROJECT_DB TO ROLE YOUR_ROLE;
--- GRANT ALL ON WAREHOUSE COMPUTE_WH TO ROLE YOUR_ROLE;
+-- GRANT USAGE ON DATABASE PROJECT_DB TO ROLE YOUR_ROLE
+-- GRANT USAGE ON ALL SCHEMAS IN DATABASE PROJECT_DB TO ROLE YOUR_ROLE
+-- GRANT ALL ON WAREHOUSE COMPUTE_WH TO ROLE YOUR_ROLE
+
+-- Create internal stage for CSV files
+CREATE STAGE IF NOT EXISTS support_data_stage;
+
+-- Create file format for CSV
+CREATE OR REPLACE FILE FORMAT csv_format
+    TYPE = 'CSV'
+    FIELD_DELIMITER = ','
+    SKIP_HEADER = 1
+    FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+    TRIM_SPACE = TRUE
+    NULL_IF = ('NULL', 'null', '');
 
 SELECT 'Setup complete: Database, Schemas, and Warehouse created.' AS STATUS;
+

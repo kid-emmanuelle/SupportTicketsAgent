@@ -26,7 +26,7 @@ setup:
 	snowsql -f sql/30_search_service.sql
 
 load-data:
-	python scripts/load_data.py
+	python -m scripts.load_data
 
 test:
 	pytest tests/ -v
