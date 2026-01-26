@@ -15,8 +15,8 @@ jobs:
                   echo "Skipping: This workflow only runs for PRs to main"
                   exit 0
 
-            - name: Verify dev branch source
-              if: github.base_ref == 'main' && github.head_ref != 'dev'
+            - name: Verify develop branch source
+              if: github.base_ref == 'main' && github.head_ref != 'develop'
               run: |
-                  echo "Error: Only 'dev' can be rebased into 'main'."
+                  echo "Error: Only 'develop' can be rebased into 'main'."
                   exit 1
