@@ -1,1 +1,7 @@
-Topic and intent classification prompt template
+Classify the customer issue into:
+- topic: one of [login, billing, bug, feature_request, how_to, account, other]
+- intent: one of [question, complaint, request, incident]
+
+Return JSON with keys: topic, intent.
+Issue:
+{issue_description}
