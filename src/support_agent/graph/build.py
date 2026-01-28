@@ -1,1 +1,1 @@
-# Graph construction and compilation
+"""Graph construction and compilation."""

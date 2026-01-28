@@ -1,3 +1,8 @@
+[project]
+name = "support-tickets-agent"
+version = "0.1.0"
+requires-python = ">=3.11"
+
 [tool.ruff]
 # Limit editor window width for better side-by-side file comparison.
 line-length = 80
@@ -28,7 +33,6 @@ select = [
     "ARG", # flake8-unused-arguments
     "Q",   # flake8-quotes
     "RUF", # ruff-specific rules
-    "ERA", # flake8-eradicate (eradicate commented-out code)
     "TRY", # flake8-try-except-raise (improve exception handling)
 ]
 
