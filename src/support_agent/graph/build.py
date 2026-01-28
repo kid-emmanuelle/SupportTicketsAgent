@@ -10,7 +10,6 @@ from .nodes import (
     classify_topic_intent,
     draft_response,
     evaluate_priority,
-    language_frequency_node,
     retrieve_node,
 )
 from .state import TicketState
@@ -31,14 +30,12 @@ def build_graph(*, session: object, settings: Settings) -> StateGraph:
     graph = StateGraph(state_schema=TicketState)
 
     # Wrap nodes so they capture llm/session/settings
-    graph.add_node("language_frequency", lambda s: language_frequency_node(s))
     graph.add_node("classify", lambda s: classify_topic_intent(llm, s))
     graph.add_node("priority", lambda s: evaluate_priority(llm, s))
     graph.add_node("retrieve", lambda s: retrieve_node(session, settings, s))
     graph.add_node("respond", lambda s: draft_response(llm, s))
 
-    graph.add_edge(START, "language_frequency")
-    graph.add_edge("language_frequency", "classify")
+    graph.add_edge(START, "classify")
     graph.add_edge("classify", "priority")
     graph.add_edge("priority", "retrieve")
     graph.add_edge("retrieve", "respond")
