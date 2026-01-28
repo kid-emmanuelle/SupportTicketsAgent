@@ -1,11 +1,10 @@
 """Cortex Search wrapper for semantic retrieval."""
-
 from __future__ import annotations
 
-from typing import Any
+from typing import List, Dict, Any, Optional
 
-from snowflake.core import Root
 from snowflake.snowpark import Session
+from snowflake.core import Root
 
 from .config import Settings
 
@@ -15,10 +14,10 @@ def retrieve_context(
     settings: Settings,
     query: str,
     *,
-    columns: list[str] | None = None,
-    limit: int | None = None,
-    filters: dict[str, Any] | None = None,
-) -> list[dict]:
+    columns: Optional[List[str]] = None,
+    limit: Optional[int] = None,
+    filters: Optional[Dict[str, Any]] = None,
+) -> List[dict]:
     """Query a Cortex Search service and return raw results.
 
     - `columns` should include the text you want (e.g., ['body_answer'] or ['chunk_text']).
@@ -36,23 +35,17 @@ def retrieve_context(
 
     kwargs = {"query": query, "columns": columns, "limit": limit}
     if filters:
-        kwargs["filter"] = (
-            filters  # depending on your SDK version, this may differ
-        )
+        kwargs["filter"] = filters  # depending on your SDK version, this may differ
 
     resp = svc.search(**kwargs)
     return list(resp.results or [])
 
 
-def retrieve_text_chunks(
-    session: Session, settings: Settings, query: str
-) -> list[str]:
+def retrieve_text_chunks(session: Session, settings: Settings, query: str) -> List[str]:
     """Convenience wrapper returning only the primary text field."""
-    results = retrieve_context(
-        session, settings, query, columns=["body_answer"]
-    )
-    out: list[str] = []
+    results = retrieve_context(session, settings, query, columns=["body_answer"])
+    out: List[str] = []
     for r in results:
-        if r.get("body_answer"):
+        if "body_answer" in r and r["body_answer"]:
             out.append(str(r["body_answer"]))
     return out
