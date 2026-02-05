@@ -11,6 +11,12 @@ from langchain_core.prompts import PromptTemplate
 from langchain_openai import ChatOpenAI
 
 from ..config import Settings
+from ..freq_baseline.language_profiles import (
+    DE_FREQ,
+    EN_FREQ,
+    _cosine_similarity,
+    _letter_frequency,
+)
 from ..retrieval import retrieve_text_chunks
 from .state import TicketState
 
@@ -24,6 +30,19 @@ def build_llm(settings: Settings) -> ChatOpenAI:
         base_url=settings.openai_api_base,
         api_key=settings.openai_api_key,
     )
+
+
+def language_frequency_node(state: TicketState) -> dict[str, Any]:
+    """Analyze letter frequency and compare against language baselines."""
+    text = state["issue_description"]
+
+    freq = _letter_frequency(text)
+
+    sim_en = _cosine_similarity(freq, EN_FREQ)
+    sim_de = _cosine_similarity(freq, DE_FREQ)
+
+    lang = "en" if sim_en > sim_de else "de"
+    return {"language": lang}
 
 
 def classify_topic_intent(
