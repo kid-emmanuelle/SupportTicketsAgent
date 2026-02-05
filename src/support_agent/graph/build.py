@@ -10,8 +10,8 @@ from .nodes import (
     classify_topic_intent,
     draft_response,
     evaluate_priority,
+    language_frequency_node,
     retrieve_node,
-    language_frequency_node
 )
 from .state import TicketState
 
@@ -26,7 +26,7 @@ def build_graph(*, session: object, settings: Settings) -> StateGraph:
     Returns:
         A compiled StateGraph representing the agent workflow.
     """
-    #llm = build_llm(settings)
+    llm = build_llm(settings)
 
     graph = StateGraph(state_schema=TicketState)
 
