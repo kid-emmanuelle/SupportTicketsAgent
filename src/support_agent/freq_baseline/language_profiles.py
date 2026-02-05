@@ -1,30 +1,14 @@
-"""Language frequency baselines and helper functions for English and German.
-
-This module provides:
-- EN_FREQ: letter frequency for English
-- DE_FREQ: letter frequency for German
-- _letter_frequency(): utility to compute letter frequencies
-- _cosine_similarity(): utility for vector similarity
-"""
-
-from collections import Counter
-from importlib.resources import files
 import json
-import math
-import re
-
+from importlib.resources import files
 
 EN_FREQ = json.loads(
-    (files("support_agent.freq_baseline") / "en_freq.json").read_text(
-        encoding="utf-8"
-    )
+    (files("support_agent.freq_baseline") / "en_freq.json").read_text(encoding="utf-8")
 )
 
 DE_FREQ = json.loads(
-    (files("support_agent.freq_baseline") / "de_freq.json").read_text(
-        encoding="utf-8"
-    )
+    (files("support_agent.freq_baseline") / "de_freq.json").read_text(encoding="utf-8")
 )
+
 
 
 def _letter_frequency(text: str) -> dict[str, float]:
