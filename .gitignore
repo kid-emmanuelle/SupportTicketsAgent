@@ -1,5 +1,6 @@
 # Python
 __pycache__/
+.pytest_cache/
 *.py[cod]
 *$py.class
 *.so
@@ -51,3 +52,6 @@ data/processed/*
 !data/processed/.gitkeep
 logs/
 *.log
+
+# Formatting
+.ruff_cache/
