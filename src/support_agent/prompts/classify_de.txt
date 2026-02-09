@@ -1,0 +1,9 @@
+Klassifiziere das Kundenproblem in:
+
+Thema: eines von [login, billing, bug, feature_request, how_to, account, other]
+
+Absicht: eine von [question, complaint, request, incident]
+
+Gib ein JSON zurück mit den Schlüsseln: topic, intent.
+Problem:
+{issue_description}
