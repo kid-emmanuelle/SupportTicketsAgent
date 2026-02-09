@@ -26,7 +26,7 @@ def build_llm(settings: Settings) -> ChatOpenAI:
     # ChatOpenAI will read OPENAI_API_BASE/OPENAI_API_KEY from env by default.
     # We set them explicitly for clarity/portability.
     return ChatOpenAI(
-        model=settings.llm_model,
+        model="gpt-4.1-mini",
         base_url=settings.openai_api_base,
         api_key=settings.openai_api_key,
     )
@@ -49,15 +49,17 @@ def classify_topic_intent(
     llm: ChatOpenAI, state: TicketState
 ) -> dict[str, Any]:
     """Classify the topic and intent of a ticket using the LLM and return them as a dictionary."""
+    language = state["language"]
+    txt = "classify.txt" if language == "en" else "classify_de.txt"
     prompt = PromptTemplate(
         input_variables=["issue_description"],
-        template=open_prompt("classify.txt"),
+        template=open_prompt(txt),
     )
     msg = HumanMessage(
         content=prompt.format(issue_description=state["issue_description"])
     )
     raw = llm.invoke([msg]).content or ""
-
+    prompt = prompt.format(issue_description=state["issue_description"])
     # Try to parse JSON; fall back to simple defaults
     topic, intent = "other", "question"
     try:
@@ -72,14 +74,17 @@ def classify_topic_intent(
 
 def evaluate_priority(llm: ChatOpenAI, state: TicketState) -> dict[str, Any]:
     """Evaluate the priority of a ticket using the LLM and return the priority level as a dictionary."""
+    language = state["language"]
+    txt = "priority.txt" if language == "en" else "priority_de.txt"
     prompt = PromptTemplate(
         input_variables=["issue_description"],
-        template=open_prompt("priority.txt"),
+        template=open_prompt(txt),
     )
     msg = HumanMessage(
         content=prompt.format(issue_description=state["issue_description"])
     )
     raw = (llm.invoke([msg]).content or "").strip().upper()
+    prompt = prompt.format(issue_description=state["issue_description"])
 
     if "URG" in raw:
         p = "URGENT"
@@ -102,12 +107,26 @@ def retrieve_node(
     return {"retrieved_context": chunks}
 
 
+def retrieve_node_stub(state: TicketState) -> dict[str, Any]:
+    """Fake context for testing."""
+    language = state["language"]
+    return {
+        "retrieved_context": [
+            "Sample documentation or prior tickets here."
+            if language == "en"
+            else "Beispieldokumentation oder frühere Tickets hier."
+        ]
+    }
+
+
 def draft_response(llm: ChatOpenAI, state: TicketState) -> dict[str, Any]:
     """Draft a response to a ticket using the LLM and the retrieved context."""
     context = (
         "\n\n---\n\n".join(state.get("retrieved_context", []) or [])
         or "NO_CONTEXT_FOUND"
     )
+    language = state["language"]
+    txt = "response.txt" if language == "en" else "response_de.txt"
     prompt = PromptTemplate(
         input_variables=[
             "issue_description",
@@ -116,7 +135,7 @@ def draft_response(llm: ChatOpenAI, state: TicketState) -> dict[str, Any]:
             "intent",
             "context",
         ],
-        template=open_prompt("response.txt"),
+        template=open_prompt(txt),
     )
     msg = HumanMessage(
         content=prompt.format(
@@ -128,6 +147,7 @@ def draft_response(llm: ChatOpenAI, state: TicketState) -> dict[str, Any]:
         )
     )
     resp = (llm.invoke([msg]).content or "").strip()
+    prompt = prompt.format(issue_description=state["issue_description"])
     return {"final_response": resp}
 
 
