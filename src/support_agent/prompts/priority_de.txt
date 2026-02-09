@@ -1,0 +1,11 @@
+Bewerte dieses Kundenproblem und weise eine Prioritätsstufe zu anhand folgender Kriterien:
+
+🔴 URGENT: Serviceausfälle, Sicherheitslücken, Zahlungsfehler, Datenverlust
+🟡 HIGH: Funktionsstörungen, die mehrere Nutzer betreffen, Integrationsfehler
+🟢 MEDIUM: Probleme einzelner Nutzer, kleinere Bugs, allgemeine Anfragen
+🔵 LOW: Feature-Anfragen, Fragen zur Dokumentation, kosmetische Probleme
+
+Kundenproblem:
+{issue_description}
+
+Prioritätsbewertung (URGENT/HIGH/MEDIUM/LOW):
