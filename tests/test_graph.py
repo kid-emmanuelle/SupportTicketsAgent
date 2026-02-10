@@ -233,11 +233,6 @@ def test_build_llm(settings):
 
     # Test a simple invocation
     from langchain_core.messages import HumanMessage
-    response = llm.invoke([HumanMessage(content="Say 'test' only.")])
-
-    assert response is not None
-    assert hasattr(response, "content")
-    assert isinstance(response.content, str)
 
     response = llm.invoke([HumanMessage(content="Say 'test' only.")])
 
