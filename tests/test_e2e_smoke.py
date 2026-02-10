@@ -1,10 +1,12 @@
 import os
+
+from dotenv import load_dotenv
 import pytest
 
 from support_agent.config import get_settings
-from support_agent.snowflake_client import create_snowpark_session
 from support_agent.graph.build import build_graph
-from dotenv import load_dotenv
+from support_agent.snowflake_client import create_snowpark_session
+
 
 load_dotenv()
 
