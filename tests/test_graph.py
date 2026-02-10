@@ -40,7 +40,7 @@ def llm(settings):
 
 @pytest.mark.skipif(
     not os.getenv("OPENAI_API_BASE") or not os.getenv("OPENAI_API_KEY"),
-    reason="Requires Snowflake Cortex env vars",
+    reason="Requires Snowflake Cortex env vars"
 )
 class TestGraphNodesIntegration:
     """Real integration tests for graph node functions."""
@@ -73,13 +73,7 @@ class TestGraphNodesIntegration:
         assert "intent" in result
         # Topic should be somewhat related to technical/API issues
         assert result["topic"].lower() in [
-            "technical",
-            "api",
-            "bug",
-            "error",
-            "other",
-            "integration",
-            "system",
+            "technical", "api", "bug", "error", "other", "integration", "system"
         ]
 
     def test_evaluate_priority_urgent(self, llm):
@@ -152,8 +146,8 @@ class TestGraphNodesIntegration:
             "priority_level": "MEDIUM",
             "retrieved_context": [
                 "To reset your password, go to the login page and click 'Forgot Password'.",
-                "You can also contact support at support@example.com for account issues.",
-            ],
+                "You can also contact support at support@example.com for account issues."
+            ]
         }
 
         result = draft_response(llm, state)
@@ -174,7 +168,7 @@ class TestGraphNodesIntegration:
             "topic": "other",
             "intent": "question",
             "priority_level": "LOW",
-            "retrieved_context": [],
+            "retrieved_context": []
         }
 
         result = draft_response(llm, state)
@@ -222,7 +216,7 @@ class TestGraphNodesIntegration:
 
 @pytest.mark.skipif(
     not os.getenv("OPENAI_API_BASE") or not os.getenv("OPENAI_API_KEY"),
-    reason="Requires Snowflake Cortex env vars",
+    reason="Requires Snowflake Cortex env vars"
 )
 def test_build_llm(settings):
     """Test that build_llm creates a valid ChatOpenAI instance."""
@@ -233,9 +227,9 @@ def test_build_llm(settings):
 
     # Test a simple invocation
     from langchain_core.messages import HumanMessage
-
     response = llm.invoke([HumanMessage(content="Say 'test' only.")])
 
     assert response is not None
     assert hasattr(response, "content")
     assert isinstance(response.content, str)
+
