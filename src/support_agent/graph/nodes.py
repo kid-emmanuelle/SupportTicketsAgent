@@ -21,6 +21,24 @@ from ..retrieval import retrieve_text_chunks
 from .state import TicketState
 
 
+def _get_language(state: TicketState) -> str:
+    """Return ticket language, inferring from text if missing.
+
+    Several nodes choose prompt variants based on language. Callers (including
+    tests) sometimes provide only `issue_description`, so we fall back to the
+    existing frequency-based detector.
+    """
+    lang = (state.get("language") or "").strip().lower()
+    if lang in {"en", "de"}:
+        return lang
+
+    try:
+        detected = language_frequency_node(state).get("language")
+        return str(detected or "en").strip().lower() or "en"
+    except Exception:
+        return "en"
+
+
 def build_llm(settings: Settings) -> ChatOpenAI:
     """Build and return a ChatOpenAI instance using the provided settings."""
     # ChatOpenAI will read OPENAI_API_BASE/OPENAI_API_KEY from env by default.
@@ -49,7 +67,7 @@ def classify_topic_intent(
     llm: ChatOpenAI, state: TicketState
 ) -> dict[str, Any]:
     """Classify the topic and intent of a ticket using the LLM and return them as a dictionary."""
-    language = state["language"]
+    language = _get_language(state)
     txt = "classify.txt" if language == "en" else "classify_de.txt"
     prompt = PromptTemplate(
         input_variables=["issue_description"],
@@ -74,7 +92,7 @@ def classify_topic_intent(
 
 def evaluate_priority(llm: ChatOpenAI, state: TicketState) -> dict[str, Any]:
     """Evaluate the priority of a ticket using the LLM and return the priority level as a dictionary."""
-    language = state["language"]
+    language = _get_language(state)
     txt = "priority.txt" if language == "en" else "priority_de.txt"
     prompt = PromptTemplate(
         input_variables=["issue_description"],
@@ -109,7 +127,7 @@ def retrieve_node(
 
 def retrieve_node_stub(state: TicketState) -> dict[str, Any]:
     """Fake context for testing."""
-    language = state["language"]
+    language = _get_language(state)
     return {
         "retrieved_context": [
             "Sample documentation or prior tickets here."
@@ -125,7 +143,7 @@ def draft_response(llm: ChatOpenAI, state: TicketState) -> dict[str, Any]:
         "\n\n---\n\n".join(state.get("retrieved_context", []) or [])
         or "NO_CONTEXT_FOUND"
     )
-    language = state["language"]
+    language = _get_language(state)
     txt = "response.txt" if language == "en" else "response_de.txt"
     prompt = PromptTemplate(
         input_variables=[
