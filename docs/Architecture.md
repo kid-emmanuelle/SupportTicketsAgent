@@ -152,17 +152,33 @@ SupportTicketsAgent/
 - `notebooks/`: exploration only (don’t make notebooks your production pipeline).
 
 ### Git workflow for collaboration (Jewin !!!)
+
 #### Branching
 - `main`: always stable, demo-ready
 - `dev`: integration branch
 - feature branches:
-    - `feat/ingest`
-    - `feat/search`
-    - `feat/langgraph`
-    - `feat/eval`
-    - `feat/app`
+    - `feat-ingest`
+    - `feat-search`
+    - `feat-langgraph`
+    - `feat-eval`
+    - `feat-app`
+    - 
 #### Rules that save our life
 - Never commit `.env` or credentials
 - Every PR must:
     - run `scripts/run_agent.py` on a sample ticket
     - not break `sql/` reproducibility
+      search_service: added init curated table creation, insert and search service creation. Notebook build search using to test
+- Before commit, always run ruff:
+  ```bash
+  ruff check --fix [path]   # Lint and auto-fix
+  ruff format [path]        # Format code
+  ```
+  Where `[path]` is optional: a file, folder, or omit for current directory.
+
+  Examples:
+  ```bash
+  ruff check --fix              # All files
+  ruff check --fix src/         # Only src folder
+  ruff format src/support_agent/config.py  # Single file
+  ```
