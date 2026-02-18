@@ -24,24 +24,27 @@ def retrieve_context(
     - `columns` should include the text you want (e.g., ['body_answer'] or ['chunk_text']).
     - `filters` can be used if your service supports attributes (e.g., {'language': 'fr'}).
     """
-    columns = columns or ["body_answer"]
-    limit = limit or settings.top_k
+    if len(query) > 0:
+        columns = columns or ["body_answer"]
+        limit = limit or settings.top_k
 
-    root = Root(session)
-    svc = (
-        root.databases[settings.search_db]
-        .schemas[settings.search_schema]
-        .cortex_search_services[settings.search_service]
-    )
-
-    kwargs = {"query": query, "columns": columns, "limit": limit}
-    if filters:
-        kwargs["filter"] = (
-            filters  # depending on your SDK version, this may differ
+        root = Root(session)
+        svc = (
+            root.databases[settings.search_db]
+            .schemas[settings.search_schema]
+            .cortex_search_services[settings.search_service]
         )
 
-    resp = svc.search(**kwargs)
-    return list(resp.results or [])
+        kwargs = {"query": query, "columns": columns, "limit": limit}
+        if filters:
+            kwargs["filter"] = (
+                filters  # depending on your SDK version, this may differ
+            )
+
+        resp = svc.search(**kwargs)
+
+        return list(resp.results)
+    return []
 
 
 def retrieve_text_chunks(
