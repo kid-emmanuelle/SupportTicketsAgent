@@ -6,6 +6,7 @@ help:
 	@echo "  make install-dev   - Install dev dependencies"
 	@echo "  make setup         - Run Snowflake setup scripts"
 	@echo "  make load-data     - Load data into Snowflake"
+	@echo "  make build-search  - Build curated table and search service"
 	@echo "  make test          - Run tests"
 	@echo "  make run-agent     - Run agent on sample ticket"
 	@echo "  make run-batch     - Run batch processing"
@@ -27,6 +28,9 @@ setup:
 
 load-data:
 	python -m scripts.load_data
+
+build-search:
+	python -m scripts.build_search
 
 test:
 	pytest tests/ -v
