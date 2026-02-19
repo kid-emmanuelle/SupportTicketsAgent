@@ -226,3 +226,71 @@ class ConversationManager:
         except Exception as e:
             print(f"Warning: Could not list conversations: {e!s}")
             return []
+
+    def load_conversation_messages(
+        self,
+        conversation_id: str,
+        rest_client: CortexAgentsRestClient,
+        *,
+        page_size: int = 100,
+    ) -> list[dict]:
+        """Load message history for a conversation from its Cortex thread.
+
+        Fetches all messages stored in the Cortex thread and converts them
+        into simple ``{"role": ..., "content": ...}`` dicts suitable for
+        rendering in the Streamlit chat UI.
+
+        Args:
+            conversation_id: The conversation whose history to load.
+            rest_client: CortexAgentsRestClient for the Threads API.
+            page_size: How many messages to retrieve per page.
+
+        Returns:
+            Ordered list of ``{"role": str, "content": str}`` dicts.
+            Returns an empty list when the conversation has no thread yet or
+            when the API call fails.
+        """
+        import json
+
+        existing = self._get_thread_from_db(conversation_id)
+        if not existing:
+            return []
+
+        thread_id, _ = existing
+        try:
+            describe = rest_client.describe_thread(
+                thread_id, page_size=page_size
+            )
+        except Exception as e:
+            print(
+                f"Warning: Could not describe thread {thread_id}: {e!s}"
+            )
+            return []
+
+        messages: list[dict] = []
+        for msg in describe.messages:
+            role = msg.role  # "user" or "assistant"
+            if role not in ("user", "assistant"):
+                continue
+
+            # message_payload is a JSON string encoding the Cortex message
+            # object, e.g. {"role":"user","content":[{"type":"text","text":"..."}]}
+            text = ""
+            try:
+                payload = json.loads(msg.message_payload)
+                content = payload.get("content") or []
+                parts: list[str] = []
+                for item in content:
+                    if isinstance(item, dict) and item.get("type") == "text":
+                        t = item.get("text")
+                        if isinstance(t, str) and t:
+                            parts.append(t)
+                text = "\n".join(parts).strip()
+            except Exception:
+                # Fallback: treat payload as plain text
+                text = msg.message_payload.strip()
+
+            if text:
+                messages.append({"role": role, "content": text})
+
+        return messages
