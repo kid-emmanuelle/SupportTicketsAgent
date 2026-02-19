@@ -7,7 +7,7 @@ State stored in `st.session_state`:
 - `chat_messages`: In-memory message history for UI display
 - `use_threads`: Whether to use Threads API (falls back to stateless if unsupported)
 
-Thread state (thread_id, parent_message_id) is now managed in Snowflake database
+Thread state (thread_id, parent_message_id) is managed in Snowflake database
 via ConversationManager, ensuring continuity across sessions.
 """
 
@@ -71,7 +71,7 @@ def main() -> None:
     col_left, col_right = st.columns([2, 1])
     with col_left:
         st.caption(
-            f"💬 Conversation: {st.session_state.conversation_id} | Messages: {len(st.session_state.chat_messages) // 2}"
+            f"Conversation: {st.session_state.conversation_id} | Messages: {len(st.session_state.chat_messages) // 2}"
         )
     with col_right:
         if st.button("New chat", use_container_width=True):
@@ -144,7 +144,7 @@ def main() -> None:
                     st.session_state.use_threads = False
                     st.session_state.threads_unsupported_details = msg
                     st.info(
-                        "⚠️ Threads API not available. Falling back to stateless mode (conversation history maintained in session only)."
+                        "Threads API not available. Falling back to stateless mode (conversation history maintained in session only)."
                     )
                     st.rerun()  # Retry with stateless mode
                 else:
