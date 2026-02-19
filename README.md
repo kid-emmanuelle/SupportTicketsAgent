@@ -45,6 +45,9 @@ See [docs/Architecture.md](docs/Architecture.md) for detailed architecture and w
    snowsql -f sql/10_ingest.sql
    snowsql -f sql/20_curate.sql
    snowsql -f sql/30_search_service.sql
+   snowsql -f sql/35_create_agent.sql
+   snowsql -f sql/40_eval_tables.sql
+   snowsql -f sql/45_cortex_threads_history.sql
    ```
 
 4. Load data:
@@ -56,7 +59,8 @@ See [docs/Architecture.md](docs/Architecture.md) for detailed architecture and w
 
 Install dev dependencies:
 ```bash
-pip install -r requirements-dev.txt```
+pip install -r requirements-dev.txt
+```
 
 Run tests:
 ```bash
