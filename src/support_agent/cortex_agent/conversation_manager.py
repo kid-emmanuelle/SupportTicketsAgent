@@ -262,9 +262,7 @@ class ConversationManager:
                 thread_id, page_size=page_size
             )
         except Exception as e:
-            print(
-                f"Warning: Could not describe thread {thread_id}: {e!s}"
-            )
+            print(f"Warning: Could not describe thread {thread_id}: {e!s}")
             return []
 
         messages: list[dict] = []

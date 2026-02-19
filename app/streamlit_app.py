@@ -84,7 +84,9 @@ def _ensure_state_initialized() -> None:
 
 def _render_history_sidebar(session: object, settings: object) -> None:
     """Render the conversation history panel in the sidebar."""
-    from support_agent.cortex_agent.conversation_manager import ConversationManager
+    from support_agent.cortex_agent.conversation_manager import (
+        ConversationManager,
+    )
     from support_agent.cortex_agent.service import get_cortex_rest_client
 
     with st.sidebar:
@@ -170,7 +172,9 @@ def _render_history_sidebar(session: object, settings: object) -> None:
                             )
                         if loaded:
                             st.session_state.chat_messages = loaded
-                            st.session_state.conversations_cache[conv_id] = loaded
+                            st.session_state.conversations_cache[conv_id] = (
+                                loaded
+                            )
                     st.rerun()
 
                 st.caption(f"  {caption}")
