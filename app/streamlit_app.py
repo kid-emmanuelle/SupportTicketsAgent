@@ -84,9 +84,8 @@ def _ensure_state_initialized() -> None:
 
 def _render_history_sidebar(session: object, settings: object) -> None:
     """Render the conversation history panel in the sidebar."""
-    from support_agent.cortex_agent.conversation_manager import (
-        ConversationManager,
-    )
+    from support_agent.cortex_agent.conversation_manager import ConversationManager
+    from support_agent.cortex_agent.service import get_cortex_rest_client
 
     with st.sidebar:
         st.header("Conversation History")
@@ -99,10 +98,13 @@ def _render_history_sidebar(session: object, settings: object) -> None:
 
         try:
             manager = ConversationManager(session=session, settings=settings)
+            rest_client = get_cortex_rest_client(settings)
             conversations = manager.list_conversations(limit=30)
         except Exception as exc:
             st.warning(f"Could not load history: {exc}")
             conversations = []
+            manager = None
+            rest_client = None
 
         # Always include the current conversation even if it isn't in the DB yet
         current_id = st.session_state.conversation_id
@@ -154,6 +156,21 @@ def _render_history_sidebar(session: object, settings: object) -> None:
                     and not is_active
                 ):
                     _switch_conversation(conv_id)
+                    # If the local cache has no messages for this conversation
+                    # (e.g. it was started in a previous browser session), load
+                    # them from the Cortex thread so the chat UI is populated.
+                    if (
+                        not st.session_state.chat_messages
+                        and manager is not None
+                        and rest_client is not None
+                    ):
+                        with st.spinner("Loading conversation history…"):
+                            loaded = manager.load_conversation_messages(
+                                conv_id, rest_client
+                            )
+                        if loaded:
+                            st.session_state.chat_messages = loaded
+                            st.session_state.conversations_cache[conv_id] = loaded
                     st.rerun()
 
                 st.caption(f"  {caption}")
