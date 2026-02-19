@@ -39,8 +39,10 @@ def llm(settings):
 
 
 @pytest.mark.skipif(
-    not os.getenv("OPENAI_API_BASE") or not os.getenv("OPENAI_API_KEY"),
-    reason="Requires Snowflake Cortex env vars",
+    os.getenv("RUN_INTEGRATION_TESTS") != "1"
+    or not os.getenv("OPENAI_API_BASE")
+    or not os.getenv("OPENAI_API_KEY"),
+    reason="Integration tests are opt-in; set RUN_INTEGRATION_TESTS=1 and provide Cortex env vars",
 )
 class TestGraphNodesIntegration:
     """Real integration tests for graph node functions."""
@@ -221,8 +223,10 @@ class TestGraphNodesIntegration:
 
 
 @pytest.mark.skipif(
-    not os.getenv("OPENAI_API_BASE") or not os.getenv("OPENAI_API_KEY"),
-    reason="Requires Snowflake Cortex env vars",
+    os.getenv("RUN_INTEGRATION_TESTS") != "1"
+    or not os.getenv("OPENAI_API_BASE")
+    or not os.getenv("OPENAI_API_KEY"),
+    reason="Integration tests are opt-in; set RUN_INTEGRATION_TESTS=1 and provide Cortex env vars",
 )
 def test_build_llm(settings):
     """Test that build_llm creates a valid ChatOpenAI instance."""

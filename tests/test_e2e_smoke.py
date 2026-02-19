@@ -12,8 +12,10 @@ load_dotenv()
 
 
 @pytest.mark.skipif(
-    not os.getenv("OPENAI_API_BASE") or not os.getenv("OPENAI_API_KEY"),
-    reason="E2E requires Snowflake Cortex env vars",
+    os.getenv("RUN_INTEGRATION_TESTS") != "1"
+    or not os.getenv("OPENAI_API_BASE")
+    or not os.getenv("OPENAI_API_KEY"),
+    reason="E2E is opt-in; set RUN_INTEGRATION_TESTS=1 and provide Cortex env vars",
 )
 def test_e2e_agent_smoke():
     settings = get_settings()
