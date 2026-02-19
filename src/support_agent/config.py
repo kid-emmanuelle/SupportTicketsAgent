@@ -32,6 +32,13 @@ class Settings:
     search_service: str
     top_k: int
 
+    # Cortex Agents REST + Threads (optional)
+    snowflake_account_url: str
+    snowflake_rest_token: str
+    cortex_agent_schema: str
+    cortex_agent_name: str
+    cortex_origin_application: str
+
 
 def get_settings() -> Settings:
     """Load settings from environment (.env supported)."""
@@ -65,4 +72,13 @@ def get_settings() -> Settings:
             "CORTEX_SEARCH_SERVICE", "support_tickets_search_service"
         ),
         top_k=int(os.getenv("RETRIEVE_TOP_K", "8")),
+        snowflake_account_url=os.getenv("SNOWFLAKE_ACCOUNT_URL", ""),
+        snowflake_rest_token=os.getenv("SNOWFLAKE_REST_TOKEN", ""),
+        cortex_agent_schema=os.getenv("CORTEX_AGENT_SCHEMA", "APP"),
+        cortex_agent_name=os.getenv(
+            "CORTEX_AGENT_NAME", "support_tickets_agent"
+        ),
+        cortex_origin_application=os.getenv(
+            "CORTEX_ORIGIN_APPLICATION", "tickets_app"
+        ),
     )
