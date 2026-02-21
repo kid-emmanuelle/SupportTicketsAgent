@@ -31,7 +31,6 @@ def execute_sql_file(session: Session, sql_file: Path) -> None:
     statements = []
     current = []
     in_string = False
-    in_comment = False
 
     for line in sql.splitlines():
         stripped = line.strip()
@@ -41,7 +40,7 @@ def execute_sql_file(session: Session, sql_file: Path) -> None:
             continue
 
         for char in line:
-            if char == "'" and not in_comment:
+            if char == "'":
                 in_string = not in_string
 
             if char == ";" and not in_string:
