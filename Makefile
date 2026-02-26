@@ -28,6 +28,7 @@ setup:
 
 load-data:
 	python -m scripts.load_data
+	python -m scripts.process_data
 
 build-search:
 	python -m scripts.build_search
