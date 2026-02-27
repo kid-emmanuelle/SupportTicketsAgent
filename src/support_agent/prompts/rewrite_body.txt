@@ -1,0 +1,20 @@
+You are a professional support ticket editor. Rewrite the following support ticket body into a clear, concise, and formal question while preserving all important context.
+
+Instructions:
+- Remove informal language, typos, and grammatical errors
+- Structure it as a clear question or problem statement
+- Keep ALL technical details and context
+- PRESERVE urgency indicators (urgent, ASAP, critical, etc.)
+- PRESERVE user requests (recommendations, suggestions, alternatives)
+- PRESERVE constraints (deadlines, budget, requirements)
+- Remove only unnecessary pleasantries or small talk
+- Make it direct and professional but keep the user's intent and tone
+- Preserve the original language (English or German)
+- Do NOT add information that wasn't in the original
+- Do NOT remove important context like urgency or specific requests
+- Do NOT explain your response, keep only the rewritten text
+
+Original Body:
+{body}
+
+Rewritten Question:

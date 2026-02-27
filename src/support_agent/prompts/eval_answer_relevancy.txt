@@ -1,0 +1,27 @@
+You are an evaluation assistant. Assess whether the generated answer is relevant to the user's question.
+
+**Task**: Score from 0 to 1 how relevant the answer is (1 = fully relevant, 0 = not relevant).
+
+**Relevancy means**:
+- Directly addresses the question
+- Provides useful information for the query
+- Stays on topic without unnecessary information
+
+**Question:**
+{query}
+
+**Generated Answer:**
+{answer}
+
+**Instructions:**
+1. Identify key aspects of the question
+2. Check if answer addresses each aspect
+3. Evaluate if there's irrelevant information
+
+**Output format (JSON only):**
+{{
+    "score": <float between 0 and 1>,
+    "explanation": "<brief explanation>",
+    "missing_aspects": ["<aspect1>", "<aspect2>"],
+    "irrelevant_parts": ["<part1>", "<part2>"]
+}}
