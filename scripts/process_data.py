@@ -9,15 +9,14 @@ This script:
 from pathlib import Path
 import sys
 
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import pandas as pd
 from snowflake.snowpark.session import Session
 
 from src.support_agent.config import get_settings
 from src.support_agent.snowflake_client import create_snowpark_session
-
-
-current_file_path = Path().resolve()
-sys.path.insert(0, str(current_file_path))
 
 
 # ============================================================================
@@ -46,28 +45,34 @@ CLEANING_RULES = {
 # ============================================================================
 
 
+_RAW_COLUMNS = [
+    "SUBJECT",
+    "BODY",
+    "ANSWER",
+    "TYPE",
+    "QUEUE",
+    "PRIORITY",
+    "LANGUAGE",
+    "VERSION",
+    "TAG_1",
+    "TAG_2",
+    "TAG_3",
+    "TAG_4",
+    "TAG_5",
+    "TAG_6",
+    "TAG_7",
+    "TAG_8",
+]
+
+
 def load_raw_data(session: Session, source_table: str) -> pd.DataFrame:
     """Load raw tickets data from Snowflake."""
-    query = f"""
-    SELECT
-        SUBJECT,
-        BODY,
-        ANSWER,
-        TYPE,
-        QUEUE,
-        PRIORITY,
-        LANGUAGE,
-        VERSION,
-        TAG_1,
-        TAG_2,
-        TAG_3,
-        TAG_4,
-        TAG_5,
-        TAG_6,
-        TAG_7,
-        TAG_8
-    FROM '{source_table}'"""
-    return session.sql(query).to_pandas().rename(columns=lambda s: s.lower())
+    return (
+        session.table(source_table)
+        .select(_RAW_COLUMNS)
+        .to_pandas()
+        .rename(columns=lambda s: s.lower())
+    )
 
 
 def apply_column_filters(
