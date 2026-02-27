@@ -1,0 +1,26 @@
+You are an evaluation assistant. Assess whether the retrieved context is relevant to answering the question.
+
+**Task**: Score from 0 to 1 the precision of retrieved contexts (1 = all contexts relevant, 0 = no relevant contexts).
+
+**Context Precision means**:
+- Retrieved chunks are relevant to the question
+- Minimal irrelevant information
+- High signal-to-noise ratio
+
+**Question:**
+{query}
+
+**Retrieved Contexts:**
+{context}
+
+**Instructions:**
+1. Identify which context chunks are relevant to the question
+2. Calculate: (relevant chunks / total chunks)
+
+**Output format (JSON only):**
+{{
+    "score": <float between 0 and 1>,
+    "explanation": "<brief explanation>",
+    "relevant_chunks": <number>,
+    "total_chunks": <number>
+}}

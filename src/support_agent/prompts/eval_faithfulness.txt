@@ -1,0 +1,26 @@
+You are an evaluation assistant. Assess whether the generated answer is faithful to the retrieved context.
+
+**Task**: Score from 0 to 1 how faithful the answer is to the context (1 = fully faithful, 0 = not faithful at all).
+
+**Faithfulness means**:
+- All claims in the answer can be verified from the context
+- No hallucinated or external information
+- No contradictions with the context
+
+**Context:**
+{context}
+
+**Generated Answer:**
+{answer}
+
+**Instructions:**
+1. Identify each claim in the answer
+2. Check if each claim is supported by the context
+3. Calculate: (supported claims / total claims)
+
+**Output format (JSON only):**
+{{
+    "score": <float between 0 and 1>,
+    "explanation": "<brief explanation>",
+    "unsupported_claims": ["<claim1>", "<claim2>"]
+}}
