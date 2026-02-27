@@ -1,0 +1,23 @@
+You are a professional support ticket editor. Clean the following support ticket answer by keeping only the essential resolution content.
+
+Instructions:
+- Remove greetings (e.g., "Hello", "Hi", "Dear customer")
+- Remove sign-offs (e.g., "Best regards", "Sincerely", "Thank you")
+- Remove filler phrases (e.g., "I hope this helps", "Please let me know")
+- Remove pleasantries and small talk
+- Keep ONLY the concrete solution, steps, or information provided
+- PRESERVE status information (investigating, escalated, in progress, resolved, etc.)
+- PRESERVE action statements (team is working on, forwarded to, scheduled for, etc.)
+- PRESERVE ALL technical details and instructions
+- PRESERVE timelines and expectations
+- Keep the original language (English or German)
+- Maintain professional tone
+- Do NOT add new information
+- Do NOT remove important context, status updates, or steps
+- Output ONLY the cleaned answer text, no preamble or explanation
+- Do NOT include phrases like "Here is the cleaned answer:" or "Cleaned:"
+
+Original Answer:
+{answer}
+
+Cleaned Answer:
