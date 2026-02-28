@@ -10,11 +10,12 @@ This script:
 from pathlib import Path
 import sys
 
+
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import pandas as pd
+from snowflake.snowpark.functions import call_builtin, col, lit
 from snowflake.snowpark.session import Session
-from snowflake.snowpark.functions import col, lit, call_builtin
 
 from src.support_agent.config import get_settings
 from src.support_agent.snowflake_client import create_snowpark_session
@@ -58,7 +59,9 @@ def load_prompt(prompt_name: str) -> str:
     Returns:
         Prompt content as string
     """
-    prompts_dir = Path(__file__).parent.parent / "src" / "support_agent" / "prompts"
+    prompts_dir = (
+        Path(__file__).parent.parent / "src" / "support_agent" / "prompts"
+    )
     prompt_path = prompts_dir / f"{prompt_name}.txt"
 
     if not prompt_path.exists():
@@ -88,14 +91,20 @@ def load_data(session: Session, source_table: str) -> pd.DataFrame:
 
 
 def apply_column_filters(
-    df: pd.DataFrame, exclude_patterns: list, exclude_column: list, keep_columns: list
+    df: pd.DataFrame,
+    exclude_patterns: list,
+    exclude_column: list,
+    keep_columns: list,
 ) -> pd.DataFrame:
     """Remove columns matching exclude patterns."""
     cols = [
         col
         for col in df.columns
-        if (col in keep_columns) or (not any(pattern in col for pattern in exclude_patterns)
-        and col not in exclude_column) 
+        if (col in keep_columns)
+        or (
+            not any(pattern in col for pattern in exclude_patterns)
+            and col not in exclude_column
+        )
     ]
     return df.loc[:, cols].copy()
 
@@ -114,15 +123,15 @@ def save_to_snowflake(
     session: Session, df: pd.DataFrame, target_table: str, target_schema: str
 ):
     """Create schema if needed and save cleaned dataframe to Snowflake table.
-    
+
     Note: Column names are converted to uppercase to match Snowflake conventions.
     """
     session.sql(f"CREATE SCHEMA IF NOT EXISTS {target_schema}").collect()
-    
+
     # Convert column names to uppercase before saving
     df_upper = df.copy()
     df_upper.columns = [c.upper() for c in df_upper.columns]
-    
+
     df_snowpark = session.create_dataframe(df_upper)
     df_snowpark.write.mode("overwrite").save_as_table(target_table)
 
@@ -213,14 +222,12 @@ def rewrite_sample_data(
     return result_df
 
 
-def save_rewritten_data(
-    session: Session, df: pd.DataFrame, target_table: str
-):
+def save_rewritten_data(session: Session, df: pd.DataFrame, target_table: str):
     """Save rewritten data back to Snowflake with uppercase column names."""
     # Convert column names to uppercase
     df_upper = df.copy()
     df_upper.columns = [c.upper() for c in df_upper.columns]
-    
+
     df_snowpark = session.create_dataframe(df_upper)
     df_snowpark.write.mode("overwrite").save_as_table(target_table)
     print(f"✓ Saved rewritten data to {target_table}")
@@ -295,7 +302,7 @@ def main() -> None:
             df = df.drop_duplicates(
                 subset=CLEANING_RULES["duplicate_columns"]
             ).copy()
-        
+
         df = df.reset_index(drop=True)
 
         print("✓ Data cleaned successfully!")
@@ -304,20 +311,16 @@ def main() -> None:
         # Rewrite body and answer to enhance text quality
         print("\nStarting text rewriting with Cortex...")
         df_rewritten = rewrite_sample_data(
-            session, 
-            df, 
-            model=CLEANING_RULES["rewrite_model"]
+            session, df, model=CLEANING_RULES["rewrite_model"]
         )
-        
+
         # Print samples to verify quality
         print_rewriting_samples(df_rewritten, n_samples=3)
-        
+
         # Save rewritten data to Snowflake (with uppercase columns)
         print("\nSaving rewritten data to Snowflake...")
         save_rewritten_data(
-            session,
-            df_rewritten,
-            CLEANING_RULES["target_table"]
+            session, df_rewritten, CLEANING_RULES["target_table"]
         )
 
         print("\n" + "=" * 80)
