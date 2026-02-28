@@ -7,14 +7,21 @@ USE DATABASE PROJECT_DB;
 USE SCHEMA SERVICES;
 USE WAREHOUSE COMPUTE_WH;
 
-CREATE OR REPLACE CORTEX SEARCH SERVICE support_tickets_search_service
-  ON chunk_body
-  ATTRIBUTES subject, priority, type, queue, language
+CREATE OR REPLACE CORTEX SEARCH SERVICE PROJECT_DB.SERVICES.support_tickets_search_service
+  VECTOR INDEXES REWRITTEN_BODY (model='voyage-multilingual-2')
+  ATTRIBUTES PRIORITY, TYPE, LANGUAGE
   WAREHOUSE = compute_wh
   TARGET_LAG = '1 day'
-  EMBEDDING_MODEL = 'snowflake-arctic-embed-l-v2.0'
   AS (
-    SELECT *,
-        concat('Body: ', chunk_body, ' \n Answer:', answer) as body_answer
-    FROM CURATED.TICKETS
+    SELECT 
+      SUBJECT,
+      REWRITTEN_BODY,
+      CLEANED_ANSWER,
+      TYPE,
+      QUEUE,
+      PRIORITY,
+      LANGUAGE,
+      TAG_1,
+      TAG_2
+    FROM PROJECT_DB.CURATED.TICKETS_CLEANED
 );
