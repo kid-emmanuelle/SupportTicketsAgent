@@ -14,9 +14,7 @@ from support_agent.cortex_agent.service import get_cortex_rest_client
 from support_agent.eval.data_sampling import (
     create_stratified_sample,
     get_tickets_data,
-    print_rewriting_samples,
     print_sample_statistics,
-    rewrite_sample_data,
 )
 from support_agent.eval.scoring import (
     compute_rag_metrics_batch,
@@ -37,10 +35,6 @@ EVALUATION_CONFIG = {
     "samples_per_combination": 2,
     "stratify_columns": ["type", "priority", "language"],  # 24 different values
     "random_state": 42,
-    "rewrite_enabled": True,
-    "rewrite_model": "claude-3-5-sonnet",
-    "show_rewrite_examples": True,
-    "n_rewrite_examples": 3,
     "run_evaluation": True,
     "evaluation_model": "claude-3-5-sonnet",
 }
@@ -142,19 +136,7 @@ def main():
 
         print_sample_statistics(sample, "STRATIFIED SAMPLE STATISTICS")
 
-        # Rewrite body and answer if enabled
-        if EVALUATION_CONFIG["rewrite_enabled"]:
-            print("\nStep 3: Rewriting tickets...")
-            sample = rewrite_sample_data(
-                session, sample, model=EVALUATION_CONFIG["rewrite_model"]
-            )
-
-            if EVALUATION_CONFIG["show_rewrite_examples"]:
-                print_rewriting_samples(
-                    sample, n_samples=EVALUATION_CONFIG["n_rewrite_examples"]
-                )
-
-        print("\nStep 4: Saving sample to Snowflake...")
+        print("\nStep 3: Saving sample to Snowflake...")
         df_snowpark = session.create_dataframe(sample)
         df_snowpark.write.mode("overwrite").save_as_table(
             EVALUATION_CONFIG["output_table_name"]
@@ -163,7 +145,7 @@ def main():
 
         # Run evaluation if enabled
         if EVALUATION_CONFIG["run_evaluation"]:
-            print("\nStep 5: Running batch evaluation...")
+            print("\nStep 4: Running batch evaluation...")
             client_agent = get_cortex_rest_client(settings)
 
             results_df = run_batch_evaluation(
@@ -174,7 +156,7 @@ def main():
                 evaluation_model=EVALUATION_CONFIG["evaluation_model"],
             )
 
-            print("\nStep 6: Saving evaluation results...")
+            print("\nStep 5: Saving evaluation results...")
             results_snowpark = session.create_dataframe(results_df)
             results_snowpark.write.mode("overwrite").save_as_table(
                 EVALUATION_CONFIG["results_table_name"]
