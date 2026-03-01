@@ -62,6 +62,10 @@ fixable = ["ALL"]
     "S101", # No assert checks in tests
 ]
 "**/tests/**/*.py" = ["D", "ANN", "S101"]
+"notebooks/*.ipynb" = [
+    "S608", # SQL queries in notebooks interpolate only app config values, not user input
+    "E402", # Notebooks legitimately add to sys.path before importing custom modules
+]
 
 [tool.ruff.lint.pydocstyle]
 # Use Google docstring convention
