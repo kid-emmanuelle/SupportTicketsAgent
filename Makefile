@@ -1,46 +1,51 @@
-.PHONY: help setup install test clean run-agent run-batch app
+PYTHON := $(shell command -v python3 2> /dev/null || command -v python 2> /dev/null)
+PIP := $(shell command -v pip3 2> /dev/null || command -v pip 2> /dev/null)
+
+.PHONY: help setup install install-dev load-data build-search build-agent evaluate-agent test clean app full-setup show-env
 
 help:
 	@echo "Available commands:"
-	@echo "  make install       - Install dependencies"
-	@echo "  make install-dev   - Install dev dependencies"
-	@echo "  make setup         - Run Snowflake setup scripts"
-	@echo "  make load-data     - Load data into Snowflake"
-	@echo "  make build-search  - Build curated table and search service"
-	@echo "  make test          - Run tests"
-	@echo "  make run-agent     - Run agent on sample ticket"
-	@echo "  make run-batch     - Run batch processing"
-	@echo "  make app           - Launch Streamlit app"
-	@echo "  make clean         - Clean temporary files"
+	@echo "  make full-setup     - Run complete setup pipeline"
+	@echo "  make install        - Install dependencies"
+	@echo "  make install-dev    - Install dev dependencies"
+	@echo "  make setup          - Run Snowflake setup scripts"
+	@echo "  make load-data      - Load data into Snowflake"
+	@echo "  make build-search   - Build curated table and search service"
+	@echo "  make build-agent    - Create Cortex Agent"
+	@echo "  make evaluate-agent - Evaluate current agent workflow on curated sample" 
+	@echo "  make test           - Run tests"
+	@echo "  make app            - Launch Streamlit app"
+	@echo "  make clean          - Clean temporary files"
+	@echo "  make show-env       - Show detected Python and pip commands"
+	
+
+full-setup: install setup load-data build-search build-agent evaluate-agent
+	@echo "SupportTicket Agent is ready to use !"
 
 install:
-	pip install -r requirements.txt
+	$(PIP) install -r requirements.txt
 
 install-dev:
-	pip install -r requirements-dev.txt
+	$(PIP) install -r requirements-dev.txt
 
 setup:
-	@echo "Running Snowflake setup scripts..."
-	snowsql -f sql/00_setup.sql
-	snowsql -f sql/10_ingest.sql
-	snowsql -f sql/20_curate.sql
-	snowsql -f sql/30_search_service.sql
+	$(PYTHON) -m scripts.setup
 
 load-data:
-	python -m scripts.load_data
-	python -m scripts.process_data
+	$(PYTHON) -m scripts.load_data
+	$(PYTHON) -m scripts.process_data
 
 build-search:
-	python -m scripts.build_search
+	$(PYTHON) -m scripts.build_search
+
+build-agent:
+	$(PYTHON) -m scripts.build_agent
+
+evaluate-agent:
+	$(PYTHON) -m scripts.evaluate
 
 test:
 	pytest tests/ -v
-
-run-agent:
-	python scripts/run_agent.py --ticket-id 1
-
-run-batch:
-	python scripts/run_batch.py
 
 app:
 	streamlit run app/streamlit_app.py
@@ -50,3 +55,8 @@ clean:
 	find . -type f -name "*.pyc" -delete
 	find . -type f -name "*.pyo" -delete
 	find . -type f -name "*.log" -delete
+	snowsql -f sql/99_cleanup.sql
+
+show-env:
+	@echo "Detected Python: $(PYTHON)"
+	@echo "Detected PIP: $(PIP)"

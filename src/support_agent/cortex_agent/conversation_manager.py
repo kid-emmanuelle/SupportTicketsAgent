@@ -8,8 +8,8 @@ from __future__ import annotations
 
 from snowflake.snowpark import Session
 
-from support_agent.config import Settings
-from support_agent.cortex_agent.rest_client import CortexAgentsRestClient
+from ..config import Settings
+from .rest_client import CortexAgentsRestClient
 
 
 class ConversationManager:

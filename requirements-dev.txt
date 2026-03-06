@@ -1,15 +1,26 @@
-# Development dependencies
+# Development or wip features dependencies
 -r requirements.txt
 
 # Testing
 pytest>=8.0.0
 
-# Formatting / linting
+# # Formatting / linting
 ruff==0.14.13   # pinned to avoid breaking CI
 
-# Optional but common
-# black>=24.0.0
-# pre-commit>=3.7.0
+# # Evaluation
+trulens==1.5.2
+trulens-providers-cortex==1.5.2
+trulens-connectors-snowflake==1.5.2
 
-# Notebook support (only enable if you actually use notebooks)
-# ipykernel>=6.29.0
+# # Agent 
+langgraph>=0.2.0
+langchain>=0.2.0
+langchain-openai>=0.1.0
+openai>=1.30.0 # OpenAI-compatible client (Snowflake Cortex OpenAI endpoint)
+
+# # Other
+typer>=0.12.0
+
+# Optional but common
+black>=24.0.0
+pre-commit>=3.7.0

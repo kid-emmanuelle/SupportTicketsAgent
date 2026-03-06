@@ -8,60 +8,24 @@ But if we want to automate it from Python:
 This script intentionally leaves those details to the environment constraints.
 """
 
+import os
 from pathlib import Path
+
+
+# Set OCSP fail-open BEFORE any Snowflake imports
+os.environ["SF_OCSP_FAIL_OPEN"] = "true"
+os.environ["SNOWFLAKE_OCSP_FAIL_OPEN"] = "true"
+
 
 from snowflake.snowpark import Session
 
+from scripts.utils import execute_sql_file
 from src.support_agent.config import get_settings
 from src.support_agent.snowflake_client import create_snowpark_session
 
 
 FILE_NOT_FOUND_MSG = "not found"
 CSV_NOT_FOUND_MSG = "CSV file not found"
-
-
-def execute_sql_file(session: Session, sql_file: Path) -> None:
-    """Execute SQL file safely (handles -- comments and semicolons in strings)."""
-    if not sql_file.exists():
-        print(f"{sql_file} not found.")
-        return
-
-    sql = sql_file.read_text(encoding="utf-8")
-
-    statements = []
-    current = []
-    in_string = False
-
-    for line in sql.splitlines():
-        stripped = line.strip()
-
-        # Skip full-line comments
-        if stripped.startswith("--"):
-            continue
-
-        for char in line:
-            if char == "'":
-                in_string = not in_string
-
-            if char == ";" and not in_string:
-                stmt = "".join(current).strip()
-                if stmt:
-                    statements.append(stmt)
-                current = []
-            else:
-                current.append(char)
-
-        current.append("\n")
-
-    # Last statement
-    final_stmt = "".join(current).strip()
-    if final_stmt:
-        statements.append(final_stmt)
-
-    for stmt in statements:
-        session.sql(stmt).collect()
-
-    print(f"✅ Executed SQL file: {sql_file.name}")
 
 
 def upload_csv_to_stage(

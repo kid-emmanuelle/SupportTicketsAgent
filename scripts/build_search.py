@@ -1,8 +1,4 @@
-"""Run cleaning process on project_db.raw.support_tickets and store it in project_db.curated_tickets.
-
-Build a Cortex Search Service on this curated ticket table.
-
-"""
+"""Build a Cortex Search Service on curated ticket table."""
 
 import os
 
@@ -17,7 +13,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 
-from scripts.load_data import execute_sql_file
+from scripts.utils import execute_sql_file
 from src.support_agent.config import get_settings
 from src.support_agent.snowflake_client import create_snowpark_session
 

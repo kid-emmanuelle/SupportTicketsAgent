@@ -6,22 +6,22 @@ import sys
 import pandas as pd
 
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from support_agent.config import Settings, get_settings
-from support_agent.cortex_agent.rest_client import CortexAgentsRestClient
-from support_agent.cortex_agent.service import get_cortex_rest_client
-from support_agent.eval.data_sampling import (
+from src.support_agent.config import Settings, get_settings
+from src.support_agent.cortex_agent.rest_client import CortexAgentsRestClient
+from src.support_agent.cortex_agent.service import get_cortex_rest_client
+from src.support_agent.eval.data_sampling import (
     create_stratified_sample,
     get_tickets_data,
     print_sample_statistics,
 )
-from support_agent.eval.scoring import (
+from src.support_agent.eval.scoring import (
     compute_rag_metrics_batch,
     extract_context_from_agent_output,
     generate_agent_completion,
 )
-from support_agent.snowflake_client import Session, create_snowpark_session
+from src.support_agent.snowflake_client import Session, create_snowpark_session
 
 
 # ============================================================================
@@ -32,11 +32,12 @@ EVALUATION_CONFIG = {
     "input_table_name": "PROJECT_DB.CURATED.TICKETS_CLEANED",
     "output_table_name": "PROJECT_DB.EVAL.TESTSET",
     "results_table_name": "PROJECT_DB.EVAL.RESULTS",
-    "samples_per_combination": 2,
+    "samples_per_combination": 5,
     "stratify_columns": ["type", "priority", "language"],  # 24 different values
     "random_state": 42,
     "run_evaluation": True,
     "evaluation_model": "claude-3-5-sonnet",
+    "n_limit": 50,
 }
 
 
@@ -131,7 +132,15 @@ def main():
             ],
             stratify_columns=EVALUATION_CONFIG["stratify_columns"],
             random_state=EVALUATION_CONFIG["random_state"],
-        )
+        ).reset_index(drop=True)
+
+        if (
+            EVALUATION_CONFIG["n_limit"]
+            and sample.shape[0] > EVALUATION_CONFIG["n_limit"]
+        ):
+            sample = sample.sample(EVALUATION_CONFIG["n_limit"]).reset_index(
+                drop=True
+            )
         print(f"✓ Created sample with {len(sample)} tickets")
 
         print_sample_statistics(sample, "STRATIFIED SAMPLE STATISTICS")
@@ -162,36 +171,6 @@ def main():
                 EVALUATION_CONFIG["results_table_name"]
             )
             print(f"✓ Saved to {EVALUATION_CONFIG['results_table_name']}")
-
-            # Print summary statistics
-            print("\n" + "=" * 80)
-            print("EVALUATION SUMMARY")
-            print("=" * 80)
-            print(f"Total tickets evaluated: {len(results_df)}")
-            print("\nAverage Scores:")
-            print(
-                f"  Faithfulness:      {results_df['faithfulness_score'].mean():.3f}"
-            )
-            print(
-                f"  Answer Relevancy:  {results_df['answer_relevancy_score'].mean():.3f}"
-            )
-            print(
-                f"  Context Precision: {results_df['context_precision_score'].mean():.3f}"
-            )
-            print(
-                f"  Context Recall:    {results_df['context_recall_score'].mean():.3f}"
-            )
-            print(
-                f"  Overall Average:   {results_df['average_score'].mean():.3f}"
-            )
-
-            if "language" in results_df.columns:
-                print("\nBy Language:")
-                print(results_df.groupby("language")["average_score"].mean())
-
-            if "priority" in results_df.columns:
-                print("\nBy Priority:")
-                print(results_df.groupby("priority")["average_score"].mean())
 
         print("\n" + "=" * 80)
         print("EVALUATION PIPELINE COMPLETE!")
