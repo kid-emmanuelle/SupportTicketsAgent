@@ -26,6 +26,7 @@ See [docs/Architecture.md](docs/Architecture.md) for detailed architecture and w
 ```
 
 ## Setup
+Requirements : python 3.11.x, snowflake account
 
 1. Set environment:
    ```bash
@@ -37,6 +38,8 @@ See [docs/Architecture.md](docs/Architecture.md) for detailed architecture and w
    ```bash
    make full-setup
    ```
+   You will be prompted for snowflake account, user, password and role (optional). 
+   This is to setup your .env file on any Snowflake account.
 3. Launch app:
    ```bash
    make app

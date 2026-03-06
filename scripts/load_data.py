@@ -8,9 +8,17 @@ But if we want to automate it from Python:
 This script intentionally leaves those details to the environment constraints.
 """
 
+import os
 from pathlib import Path
 
+
+# Set OCSP fail-open BEFORE any Snowflake imports
+os.environ["SF_OCSP_FAIL_OPEN"] = "true"
+os.environ["SNOWFLAKE_OCSP_FAIL_OPEN"] = "true"
+
+
 from snowflake.snowpark import Session
+
 from scripts.utils import execute_sql_file
 from src.support_agent.config import get_settings
 from src.support_agent.snowflake_client import create_snowpark_session
@@ -18,6 +26,7 @@ from src.support_agent.snowflake_client import create_snowpark_session
 
 FILE_NOT_FOUND_MSG = "not found"
 CSV_NOT_FOUND_MSG = "CSV file not found"
+
 
 def upload_csv_to_stage(
     session: Session,

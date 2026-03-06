@@ -18,6 +18,7 @@ def create_snowpark_session(settings: Settings) -> Session:
         "warehouse": settings.warehouse or None,
         "database": settings.database or None,
         "schema": settings.schema or None,
+        "insecure_mode": True,
     }
     # Remove None values to avoid Snowpark complaints in some environments
     connection_parameters = {
