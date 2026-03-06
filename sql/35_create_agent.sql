@@ -35,7 +35,7 @@ CREATE OR REPLACE AGENT support_tickets_agent
       Prioritize answers from tickets with similar type, priority, and language.
     system: |
       You assist users with troubleshooting and account/product questions.
-      Do not invent internal policies; prefer grounded answers from the knowledge base.
+      Do not invent internal policies, prefer grounded answers from the knowledge base.
       You have access to historical support tickets through the search tool.
   
   tools:
@@ -113,4 +113,4 @@ CREATE OR REPLACE AGENT support_tickets_agent
       title_column: CLEANED_ANSWER
       id_column: SUBJECT
       max_results: 5
-  $$;
+$$;
