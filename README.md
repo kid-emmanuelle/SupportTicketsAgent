@@ -100,3 +100,37 @@ python src/support_agent/eval/run_eval.py
 ```
 
 View results in `notebooks/03_eval_report.ipynb`
+
+
+# Démo : 
+
+
+
+# Demo
+
+We will demonstrate here with screenshots the different features of the service used by the client.
+We will follow this scenario:
+- Interface at opening
+- 2-3 question conversation
+- New conversation
+- Switching/Resuming conversation
+
+When opening the application, the client finds a chat system with the ability to converse with the RAG but also to find their other conversations.
+
+![Interface at Opening](img/welcome_ui.png)
+
+We can see that the agent leverages the search service with the knowledge base to best answer the user's question.
+
+![Conversation 1 question 1](img/example_conv1_q1.png)
+
+We can also continue the conversation with other questions or requests.
+
+![Conversation 1 question 2](img/example_conv1_q2.png)
+
+We can also converse in another chat in German, for example.
+
+![New Conversation 2 ](img/example_conv2.png)
+
+The client can retrieve their old conversations; here we see the first conversation. The context is also preserved and reused by the agent throughout a conversation.
+
+![Reload Conversation 1](img/example_conv1_reloading.png)
