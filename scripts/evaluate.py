@@ -6,22 +6,22 @@ import sys
 import pandas as pd
 
 
-sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from support_agent.config import Settings, get_settings
-from support_agent.cortex_agent.rest_client import CortexAgentsRestClient
-from support_agent.cortex_agent.service import get_cortex_rest_client
-from support_agent.eval.data_sampling import (
+from src.support_agent.config import Settings, get_settings
+from src.support_agent.cortex_agent.rest_client import CortexAgentsRestClient
+from src.support_agent.cortex_agent.service import get_cortex_rest_client
+from src.support_agent.eval.data_sampling import (
     create_stratified_sample,
     get_tickets_data,
     print_sample_statistics,
 )
-from support_agent.eval.scoring import (
+from src.support_agent.eval.scoring import (
     compute_rag_metrics_batch,
     extract_context_from_agent_output,
     generate_agent_completion,
 )
-from support_agent.snowflake_client import Session, create_snowpark_session
+from src.support_agent.snowflake_client import Session, create_snowpark_session
 
 
 # ============================================================================
@@ -122,6 +122,7 @@ def main():
         print("\nStep 1: Fetching tickets data...")
         df = get_tickets_data(session, EVALUATION_CONFIG["input_table_name"])
         print(f"✓ Loaded {len(df)} tickets")
+        df=df.sample(100)
 
         print("\nStep 2: Creating stratified sample...")
         sample = create_stratified_sample(

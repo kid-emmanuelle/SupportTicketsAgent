@@ -8,8 +8,8 @@ import pandas as pd
 from snowflake.snowpark.functions import call_builtin, col, lit
 from snowflake.snowpark.session import Session
 
-from support_agent.config import Settings
-from support_agent.cortex_agent.rest_client import CortexAgentsRestClient
+from ..config import Settings
+from ..cortex_agent.rest_client import CortexAgentsRestClient
 
 
 # ============================================================================
