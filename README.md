@@ -9,6 +9,7 @@ This project implements an intelligent agent that:
 - Assigns priority levels (URGENT/HIGH/MEDIUM/LOW)
 - Retrieves relevant knowledge base articles using semantic search
 - Generates contextual responses
+- Agent's responses evaluation with llm as a judge
 - Applies policy guardrails
 
 ## Project Structure
@@ -16,50 +17,38 @@ This project implements an intelligent agent that:
 See [docs/Architecture.md](docs/Architecture.md) for detailed architecture and workflow.
 
 ```
-├── sql/              # Snowflake DDL and setup scripts
-├── src/              # Agent library (graph, retrieval, prompts, eval)
+├── sql/              # Snowflake DDL
+├── src/              # Agent library (graph, retrieval, prompts, eval, cortex_agent, persistence)
 ├── app/              # Streamlit demo UI
-├── scripts/          # CLI entry points
+├── scripts/          # Setup python scripts
 ├── notebooks/        # Exploration notebooks
 └── tests/            # Unit tests
 ```
 
 ## Setup
 
-1. Copy `.env.example` to `.env` and fill in your Snowflake credentials:
+1. Set environment:
    ```bash
-   cp .env.example .env
-   ```
-
-2. Set environment and install dependencies:
-   ```bash
+   cd ./SupportTicketsAgent
    py -3.11 -m venv .venv
    source .venv/bin/activate   # Windows: .venv\Scripts\activate
-   pip install -r requirements.txt
+   ```
+2. Launch setup with makefile:
+   ```bash
+   make full-setup
+   ```
+3. Launch app:
+   ```bash
+   make app
    ```
 
-3. Set up Snowflake objects:
-   ```bash
-   # Run SQL scripts in order
-   snowsql -f sql/00_setup.sql
-   snowsql -f sql/10_ingest.sql
-   snowsql -f sql/20_curate.sql
-   snowsql -f sql/30_search_service.sql
-   snowsql -f sql/35_create_agent.sql
-   snowsql -f sql/40_eval_tables.sql
-   snowsql -f sql/45_cortex_threads_history.sql
-   ```
-
-4. Load data:
-   ```bash
-   python scripts/load_data.py
-   ```
+4. Enjoy our agent !
 
 ## Development
 
 Install dev dependencies:
 ```bash
-pip install -r requirements-dev.txt
+make install-dev
 ```
 
 Run tests:
@@ -69,16 +58,6 @@ pytest tests/
 
 ## Usage
 
-Run agent on a single ticket:
-```bash
-python scripts/run_agent.py --ticket-id 12345
-```
-
-Run batch processing:
-```bash
-python scripts/run_batch.py --input tickets.csv
-```
-
 Launch demo app:
 ```bash
 streamlit run app/streamlit_app.py
@@ -87,26 +66,19 @@ streamlit run app/streamlit_app.py
 ## Git Workflow
 
 - `main`: stable, demo-ready
-- `dev`: integration branch
-- Feature branches: `feat/ingest`, `feat/search`, `feat/langgraph`, etc.
+- Feature branches: `feat/ingest`, `feat-search-service`, `feat/langgraph`, etc.
 
 **Important:** Never commit `.env` or credentials!
 
 ## Evaluation
 
-Run evaluation:
+You can configure evaluation sample on ```EVALUATION_CONFIG``` stored in ```scripts/evaluate.py```
 ```bash
-python src/support_agent/eval/run_eval.py
+make evaluate-agent
 ```
-
 View results in `notebooks/03_eval_report.ipynb`
 
-
 # Démo : 
-
-
-
-# Demo
 
 We will demonstrate here with screenshots the different features of the service used by the client.
 We will follow this scenario:
