@@ -33,10 +33,11 @@ EVALUATION_CONFIG = {
     "output_table_name": "PROJECT_DB.EVAL.TESTSET",
     "results_table_name": "PROJECT_DB.EVAL.RESULTS",
     "samples_per_combination": 2,
-    "stratify_columns": ["type", "priority", "language"],  # 24 different values
+    "stratify_columns": ["language"],  # 24 different values
     "random_state": 42,
     "run_evaluation": True,
     "evaluation_model": "claude-3-5-sonnet",
+    "n_limit": 50
 }
 
 
@@ -122,7 +123,6 @@ def main():
         print("\nStep 1: Fetching tickets data...")
         df = get_tickets_data(session, EVALUATION_CONFIG["input_table_name"])
         print(f"✓ Loaded {len(df)} tickets")
-        df=df.sample(100)
 
         print("\nStep 2: Creating stratified sample...")
         sample = create_stratified_sample(
@@ -133,6 +133,9 @@ def main():
             stratify_columns=EVALUATION_CONFIG["stratify_columns"],
             random_state=EVALUATION_CONFIG["random_state"],
         )
+        
+        if EVALUATION_CONFIG["n_limit"]:
+            sample = sample.sample(EVALUATION_CONFIG["n_limit"])
         print(f"✓ Created sample with {len(sample)} tickets")
 
         print_sample_statistics(sample, "STRATIFIED SAMPLE STATISTICS")
@@ -163,36 +166,6 @@ def main():
                 EVALUATION_CONFIG["results_table_name"]
             )
             print(f"✓ Saved to {EVALUATION_CONFIG['results_table_name']}")
-
-            # Print summary statistics
-            print("\n" + "=" * 80)
-            print("EVALUATION SUMMARY")
-            print("=" * 80)
-            print(f"Total tickets evaluated: {len(results_df)}")
-            print("\nAverage Scores:")
-            print(
-                f"  Faithfulness:      {results_df['faithfulness_score'].mean():.3f}"
-            )
-            print(
-                f"  Answer Relevancy:  {results_df['answer_relevancy_score'].mean():.3f}"
-            )
-            print(
-                f"  Context Precision: {results_df['context_precision_score'].mean():.3f}"
-            )
-            print(
-                f"  Context Recall:    {results_df['context_recall_score'].mean():.3f}"
-            )
-            print(
-                f"  Overall Average:   {results_df['average_score'].mean():.3f}"
-            )
-
-            if "language" in results_df.columns:
-                print("\nBy Language:")
-                print(results_df.groupby("language")["average_score"].mean())
-
-            if "priority" in results_df.columns:
-                print("\nBy Priority:")
-                print(results_df.groupby("priority")["average_score"].mean())
 
         print("\n" + "=" * 80)
         print("EVALUATION PIPELINE COMPLETE!")
