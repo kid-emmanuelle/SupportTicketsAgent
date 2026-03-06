@@ -1,15 +1,18 @@
 """Run setup sql scripts and .env dependent scripts."""
 
+from pathlib import Path
 import re
 import sys
-from pathlib import Path
+
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from scripts.utils import execute_sql_file
-from src.support_agent.config import get_settings, Settings
-from src.support_agent.snowflake_client import create_snowpark_session
 from snowflake.snowpark import Session
+
+from scripts.utils import execute_sql_file
+from src.support_agent.config import Settings, get_settings
+from src.support_agent.snowflake_client import create_snowpark_session
+
 
 ROOT = Path(__file__).resolve().parent.parent
 ENV_EXAMPLE = ROOT / ".env.example"
@@ -17,18 +20,45 @@ ENV_OUT = ROOT / ".env"
 
 
 def prompt(label: str, default: str = "") -> str:
+    """Prompt the user for input with an optional default value.
+
+    Args:
+        label: The prompt message to display to the user.
+        default: Optional default value to use if user provides no input.
+
+    Returns:
+        The user's input, or the default value if no input provided.
+    """
     hint = f" [{default}]" if default else ""
     value = input(f"{label}{hint}: ").strip()
     return value or default
 
 
 def fill_env(account: str, user: str, password: str, role: str) -> None:
+    """Create or overwrite .env file with Snowflake credentials.
+
+    Reads from .env.example template and replaces placeholders with actual values.
+    Prompts for confirmation before overwriting existing .env file.
+
+    Args:
+        account: Snowflake account identifier.
+        user: Snowflake username.
+        password: Snowflake password.
+        role: Snowflake role (e.g., ACCOUNTADMIN).
+
+    Raises:
+        SystemExit: If .env.example not found or user declines overwrite.
+    """
     if not ENV_EXAMPLE.exists():
         print(f"Error: {ENV_EXAMPLE} not found.", file=sys.stderr)
         sys.exit(1)
 
     if ENV_OUT.exists():
-        answer = input(f"{ENV_OUT} already exists. Overwrite? [y/N] ").strip().lower()
+        answer = (
+            input(f"{ENV_OUT} already exists. Overwrite? [y/N] ")
+            .strip()
+            .lower()
+        )
         if answer != "y":
             print("Aborted.")
             sys.exit(0)
@@ -51,15 +81,36 @@ def fill_env(account: str, user: str, password: str, role: str) -> None:
     print(f".env written to {ENV_OUT}")
 
 
-def get_pat_secret(session: Session, settings: Settings, n_days_to_expire: int = 30) -> str:
+def get_pat_secret(
+    session: Session, settings: Settings, n_days_to_expire: int = 30
+) -> str:
+    """Generate or rotate a Programmatic Access Token (PAT) for the user.
+
+    Configures Cortex cross-region settings, network policies, and manages
+    the PAT lifecycle. If a token exists, it rotates it; otherwise creates new.
+
+    Args:
+        session: Active Snowpark session.
+        settings: Application settings containing user credentials.
+        n_days_to_expire: Number of days until token expiration (default: 30).
+
+    Returns:
+        The secret value of the generated or rotated PAT.
+    """
     # get .env user name
     user_name = settings.user.upper()
     token_name = user_name + "_" + "pat"
 
     # Enable all regions and add policy to user
-    session.sql("ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION'").collect()
-    session.sql("CREATE NETWORK POLICY IF NOT EXISTS cortex_policy ALLOWED_IP_LIST = ('0.0.0.0/0')").collect()
-    session.sql(f"ALTER USER {user_name} SET NETWORK_POLICY = CORTEX_POLICY").collect()
+    session.sql(
+        "ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION'"
+    ).collect()
+    session.sql(
+        "CREATE NETWORK POLICY IF NOT EXISTS cortex_policy ALLOWED_IP_LIST = ('0.0.0.0/0')"
+    ).collect()
+    session.sql(
+        f"ALTER USER {user_name} SET NETWORK_POLICY = CORTEX_POLICY"
+    ).collect()
 
     # Looking for existing pat
     query = f"SHOW USER PROGRAMMATIC ACCESS TOKENS FOR USER {user_name};"
@@ -82,7 +133,13 @@ def get_pat_secret(session: Session, settings: Settings, n_days_to_expire: int =
 
 
 def main() -> None:
-    """Execute setup."""
+    """Execute complete Snowflake environment setup workflow.
+
+    Performs the following steps:
+    1. Collects Snowflake credentials and creates .env file
+    2. Executes SQL setup scripts (warehouse, schema, tables, stage, policies)
+    3. Generates programmatic access token and updates .env
+    """
     # Step 1: Initialize .env file
     print("Step 1: Configure Snowflake credentials...\n")
     account = prompt("Snowflake account (e.g. xy12345-yi81042)")
@@ -91,7 +148,9 @@ def main() -> None:
     role = prompt("Snowflake role", default="ACCOUNTADMIN")
 
     if not account or not user or not password:
-        print("Error: account, user and password are required.", file=sys.stderr)
+        print(
+            "Error: account, user and password are required.", file=sys.stderr
+        )
         sys.exit(1)
 
     fill_env(account, user, password, role)

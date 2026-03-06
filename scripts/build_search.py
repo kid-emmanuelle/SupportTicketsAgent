@@ -1,4 +1,4 @@
-""" Build a Cortex Search Service on curated ticket table."""
+"""Build a Cortex Search Service on curated ticket table."""
 
 import os
 

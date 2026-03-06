@@ -42,7 +42,7 @@ CLEANING_RULES = {
     "target_table": "PROJECT_DB.CURATED.TICKETS_CLEANED",
     # Rewriting configuration
     "rewrite_model": "claude-3-5-sonnet",
-    "n_limit": 1000
+    "n_limit": 1000,
 }
 
 
@@ -303,7 +303,7 @@ def main() -> None:
             df = df.drop_duplicates(
                 subset=CLEANING_RULES["duplicate_columns"]
             ).copy()
-        
+
         if CLEANING_RULES["n_limit"]:
             df = df.sample(CLEANING_RULES["n_limit"])
         df = df.reset_index(drop=True)

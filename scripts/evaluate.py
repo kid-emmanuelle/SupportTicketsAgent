@@ -37,7 +37,7 @@ EVALUATION_CONFIG = {
     "random_state": 42,
     "run_evaluation": True,
     "evaluation_model": "claude-3-5-sonnet",
-    "n_limit": 50
+    "n_limit": 50,
 }
 
 
@@ -133,9 +133,14 @@ def main():
             stratify_columns=EVALUATION_CONFIG["stratify_columns"],
             random_state=EVALUATION_CONFIG["random_state"],
         ).reset_index(drop=True)
-        
-        if EVALUATION_CONFIG["n_limit"] and sample.shape[0]>EVALUATION_CONFIG["n_limit"]:
-            sample = sample.sample(EVALUATION_CONFIG["n_limit"]).reset_index(drop=True)
+
+        if (
+            EVALUATION_CONFIG["n_limit"]
+            and sample.shape[0] > EVALUATION_CONFIG["n_limit"]
+        ):
+            sample = sample.sample(EVALUATION_CONFIG["n_limit"]).reset_index(
+                drop=True
+            )
         print(f"✓ Created sample with {len(sample)} tickets")
 
         print_sample_statistics(sample, "STRATIFIED SAMPLE STATISTICS")

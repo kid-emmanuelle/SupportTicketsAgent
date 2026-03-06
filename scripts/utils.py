@@ -1,6 +1,7 @@
-""" Utilities for scripts python file """
+"""Utilities for scripts python file."""
 
 from pathlib import Path
+
 from snowflake.snowpark import Session
 
 
