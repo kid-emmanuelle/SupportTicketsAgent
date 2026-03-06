@@ -32,8 +32,8 @@ EVALUATION_CONFIG = {
     "input_table_name": "PROJECT_DB.CURATED.TICKETS_CLEANED",
     "output_table_name": "PROJECT_DB.EVAL.TESTSET",
     "results_table_name": "PROJECT_DB.EVAL.RESULTS",
-    "samples_per_combination": 2,
-    "stratify_columns": ["language"],  # 24 different values
+    "samples_per_combination": 5,
+    "stratify_columns": ["type", "priority", "language"],  # 24 different values
     "random_state": 42,
     "run_evaluation": True,
     "evaluation_model": "claude-3-5-sonnet",
@@ -132,10 +132,10 @@ def main():
             ],
             stratify_columns=EVALUATION_CONFIG["stratify_columns"],
             random_state=EVALUATION_CONFIG["random_state"],
-        )
+        ).reset_index(drop=True)
         
-        if EVALUATION_CONFIG["n_limit"]:
-            sample = sample.sample(EVALUATION_CONFIG["n_limit"])
+        if EVALUATION_CONFIG["n_limit"] and sample.shape[0]>EVALUATION_CONFIG["n_limit"]:
+            sample = sample.sample(EVALUATION_CONFIG["n_limit"]).reset_index(drop=True)
         print(f"✓ Created sample with {len(sample)} tickets")
 
         print_sample_statistics(sample, "STRATIFIED SAMPLE STATISTICS")
